@@ -199,6 +199,8 @@ class film {
   void shotlog(string message);
   void create_main_dir(void);
 
+  void json_output();
+
   /* Constructor */
   film();
 #ifdef WXWIDGETS

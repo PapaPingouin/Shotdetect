@@ -61,6 +61,7 @@ void show_help(char **argv) {
       "-l           : generate last image for each shot\n"
       "-m           : generate the thumbnail image\n"
       "-r           : generate the images in native resolution\n"
+      "-j           : generate json of shots list\n"
       "-c           : print timecode on x-axis in graph\n",
       g_APP_VERSION, argv[0], DEFAULT_THRESHOLD);
 }
@@ -72,6 +73,7 @@ int main(int argc, char **argv) {
   bool ofile_set = false;
   bool id_set = false;
   bool xsl_path_set = false;
+  bool json_out = false;
   string xsl_path = "Not set";
 
   extern char *optarg;
@@ -86,7 +88,7 @@ int main(int argc, char **argv) {
   f.set_draw_yuv_graph(false);  // YUV graph is still disabled, until it works.
 
   for (;;) {
-    int c = getopt(argc, argv, "?ht:y:i:o:a:x:s:flwvmrc");
+    int c = getopt(argc, argv, "?ht:y:i:o:a:x:s:flwvmrcj");
 
     if (c < 0) {
       break;
@@ -129,6 +131,12 @@ int main(int argc, char **argv) {
         f.set_audio(true);
         break;
 
+      /* Generate json output of shos list */
+      case 'j':
+        json_out = true;
+        break;
+
+      
       /* Set the threshold */
       case 's':
         f.set_threshold(atoi(optarg));
@@ -207,6 +215,12 @@ int main(int argc, char **argv) {
   f.process();
   string xml_path = "result.xml";
   f.x->write_data(xml_path);
+  
+  if( json_out )
+  {
+    f.json_output();  
+  }
+  
   /*string finished_path = f.global_path;
   finished_path += "/finished";
   FILE *fd_finished = fopen(finished_path.c_str(),"w");

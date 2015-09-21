@@ -695,3 +695,30 @@ film::film() {
   this->thumb_set = false;
   this->shot_set = false;
 }
+
+void film::json_output(){
+  FILE *fd_json;
+
+  string jsonpath = this->global_path + "/shots.json";
+  
+  fd_json = fopen(jsonpath.c_str(), "w");
+  
+  fprintf(fd_json,"[");
+  
+  list<shot>::iterator il;
+  for (il = this->shots.begin(); il != this->shots.end(); il++) {
+    if( (*il).myid != 0 )
+      fprintf(fd_json,","); // place a , beetween each shot (not on the first)
+      
+    fprintf(fd_json,"{\"id\":%d,\"fduration\":%d,\"msduration\":%d,\"fbegin\":%d,\"msbegin\":%d}"
+			,(*il).myid
+			,(*il).fduration
+			,int((*il).msduration)
+			,(*il).fbegin
+			,int((*il).msbegin) 
+			);
+  }
+  fprintf(fd_json,"]");
+  fclose(fd_json);
+  
+}
